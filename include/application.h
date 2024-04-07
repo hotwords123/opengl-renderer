@@ -37,6 +37,7 @@ private:
     float last_time_;
     bool wireframe_;
     ShaderType shader_type_;
+    bool blinn_;
     bool first_mouse_;
     double last_x_;
     double last_y_;

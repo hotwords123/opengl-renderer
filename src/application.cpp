@@ -44,6 +44,7 @@ Application::Application(GLFWwindow *window)
       last_time_(0.0f),
       wireframe_(false),
       shader_type_(ShaderType::kPhong),
+      blinn_(true),
       first_mouse_(true),
       last_x_(),
       last_y_() {
@@ -140,10 +141,11 @@ int Application::exec() {
         shader.set_vec3("material.ambient", object_color);
         shader.set_vec3("material.diffuse", object_color);
         shader.set_vec3("material.specular", glm::vec3(0.5f));
-        shader.set_float("material.shininess", 32.0f);
+        shader.set_float("material.shininess", blinn_ ? 16.0f : 8.0f);
         shader.set_vec3("light.ambient", 0.1f * light_color);
         shader.set_vec3("light.diffuse", 0.8f * light_color);
         shader.set_vec3("light.specular", light_color);
+        shader.set_bool("light.blinn", blinn_);
 
         mesh.draw();
 
@@ -180,6 +182,13 @@ void Application::process_input(float delta_time) {
     }
     if (glfwGetKey(window_, GLFW_KEY_2) == GLFW_PRESS) {
         shader_type_ = ShaderType::kGouraud;
+    }
+
+    if (glfwGetKey(window_, GLFW_KEY_3) == GLFW_PRESS) {
+        blinn_ = true;
+    }
+    if (glfwGetKey(window_, GLFW_KEY_4) == GLFW_PRESS) {
+        blinn_ = false;
     }
 
     for (const auto &[key, movement] : movement_map) {

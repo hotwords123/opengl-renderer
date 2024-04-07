@@ -38,6 +38,7 @@ public:
 
     int uniform_location(const char *name) const;
 
+    void set_bool(const char *name, bool value) const;
     void set_float(const char *name, float value) const;
     void set_vec3(const char *name, glm::vec3 value) const;
     void set_mat3(const char *name, const glm::mat3 &value) const;

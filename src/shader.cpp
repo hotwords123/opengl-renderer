@@ -105,6 +105,10 @@ int ShaderProgram::uniform_location(const char *name) const {
     return glGetUniformLocation(id_, name);
 }
 
+void ShaderProgram::set_bool(const char *name, bool value) const {
+    glUniform1i(uniform_location(name), value);
+}
+
 void ShaderProgram::set_float(const char *name, float value) const {
     glUniform1f(uniform_location(name), value);
 }
