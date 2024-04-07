@@ -137,11 +137,13 @@ int Application::exec() {
         shader.set_mat3("normalMatrix", normal_matrix);
         shader.set_vec3("lightPos", light_pos);
 
-        shader.set_vec3("material.ambient", 0.1f * object_color);
+        shader.set_vec3("material.ambient", object_color);
         shader.set_vec3("material.diffuse", object_color);
         shader.set_vec3("material.specular", glm::vec3(0.5f));
         shader.set_float("material.shininess", 32.0f);
-        shader.set_vec3("lightColor", light_color);
+        shader.set_vec3("light.ambient", 0.1f * light_color);
+        shader.set_vec3("light.diffuse", 0.8f * light_color);
+        shader.set_vec3("light.specular", light_color);
 
         mesh.draw();
 
