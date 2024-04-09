@@ -28,7 +28,11 @@ uniform vec3 lightPos;
 uniform Material material;
 uniform Light light;
 
-vec3 illuminate(Material material, Light light, vec3 normal, vec3 lightDir, vec3 viewDir) {
+vec3 illuminate(Material material, Light light, vec3 fragPos, vec3 normal, vec3 lightPos) {
+    vec3 lightDir = normalize(lightPos - fragPos);
+    vec3 viewDir = normalize(-fragPos);
+    normal = sign(normal.z) * normalize(normal);
+
     // ambient
     vec3 ambient = material.ambient * light.ambient;
 
@@ -37,13 +41,15 @@ vec3 illuminate(Material material, Light light, vec3 normal, vec3 lightDir, vec3
     vec3 diffuse = diff * material.diffuse * light.diffuse;
 
     // specular
-    float spec;
-    if (light.blinn) {
-        vec3 halfwayDir = normalize(lightDir + viewDir);
-        spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
-    } else {
-        vec3 reflectDir = reflect(-lightDir, normal);
-        spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+    float spec = 0.0;
+    if (diff > 0.0) {
+        if (light.blinn) {
+            vec3 halfwayDir = normalize(lightDir + viewDir);
+            spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+        } else {
+            vec3 reflectDir = reflect(-lightDir, normal);
+            spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+        }
     }
     vec3 specular = spec * material.specular * light.specular;
 
@@ -54,11 +60,8 @@ void main() {
     vec3 vPos = vec3(view * model * vec4(aPos, 1.0));
     vec3 vLightPos = vec3(view * vec4(lightPos, 1.0));
 
-    vec3 normal = normalize(normalMatrix * aNormal);
-    vec3 lightDir = normalize(vLightPos - vPos);
-    vec3 viewDir = normalize(-vPos);
-
-    Color = illuminate(material, light, normal, lightDir, viewDir);
+    vec3 normal = normalMatrix * aNormal;
+    Color = illuminate(material, light, vPos, normal, vLightPos);
 
     gl_Position = projection * view * model * vec4(aPos, 1.0);
 }
