@@ -14,10 +14,10 @@ void CameraController::handle_keyboard(CameraMovement movement, float delta_time
 
     switch (movement) {
         case CameraMovement::kForward:
-            offset = camera_.front();
+            offset = glm::cross(camera_.world_up(), camera_.right());
             break;
         case CameraMovement::kBackward:
-            offset = -camera_.front();
+            offset = -glm::cross(camera_.world_up(), camera_.right());
             break;
         case CameraMovement::kLeft:
             offset = -camera_.right();
@@ -26,10 +26,10 @@ void CameraController::handle_keyboard(CameraMovement movement, float delta_time
             offset = camera_.right();
             break;
         case CameraMovement::kUp:
-            offset = camera_.up();
+            offset = camera_.world_up();
             break;
         case CameraMovement::kDown:
-            offset = -camera_.up();
+            offset = -camera_.world_up();
             break;
     }
 
