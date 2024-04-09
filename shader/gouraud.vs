@@ -31,7 +31,7 @@ uniform Light light;
 vec3 illuminate(Material material, Light light, vec3 fragPos, vec3 normal, vec3 lightPos) {
     vec3 lightDir = normalize(lightPos - fragPos);
     vec3 viewDir = normalize(-fragPos);
-    normal = sign(normal.z) * normalize(normal);
+    normal = normalize(normal) * sign(dot(normal, viewDir));
 
     // ambient
     vec3 ambient = material.ambient * light.ambient;
