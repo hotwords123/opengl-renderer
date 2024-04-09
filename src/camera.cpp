@@ -5,6 +5,9 @@
 
 using namespace std;
 
+Camera::Camera()
+    : Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 0.0f, 0.0f) {}
+
 Camera::Camera(glm::vec3 position, glm::vec3 world_up, float yaw, float pitch)
     : position_(position), world_up_(world_up), yaw_(yaw), pitch_(pitch) {
     update();

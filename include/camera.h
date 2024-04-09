@@ -5,6 +5,7 @@
 
 class Camera {
 public:
+    Camera();
     Camera(glm::vec3 position, glm::vec3 world_up, float yaw, float pitch);
 
     glm::vec3 position() const { return position_; }

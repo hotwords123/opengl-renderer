@@ -34,12 +34,7 @@ Application::Application(GLFWwindow *window)
     : window_(window),
       width_(),
       height_(),
-      camera_(
-          glm::vec3(0.0f),
-          glm::vec3(0.0f, 1.0f, 0.0f),
-          0.0f,
-          0.0f
-      ),
+      camera_(),
       controller_(camera_),
       last_time_(0.0f),
       wireframe_(false),
@@ -59,6 +54,7 @@ Application::Application(GLFWwindow *window)
     glfwSetInputMode(window_, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_FRAMEBUFFER_SRGB);
 
     // Turn on vsync
     glfwSwapInterval(1);
@@ -108,7 +104,7 @@ int Application::exec() {
 
         process_input(delta_time);
 
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.05f, 0.08f, 0.12f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         if (wireframe_) {
@@ -125,8 +121,8 @@ int Application::exec() {
 
         glm::mat3 normal_matrix(glm::transpose(glm::inverse(view * model)));
 
-        glm::vec3 object_color(1.0f, 0.5f, 0.31f);
-        glm::vec3 light_pos(-50.0f, 50.0f, -200.0f);
+        glm::vec3 object_color(0.90f, 0.50f, 0.35f);
+        glm::vec3 light_pos(50.0f, 50.0f, -250.0f);
         glm::vec3 light_color(1.0f, 1.0f, 1.0f);
 
         const ShaderProgram &shader = shader_type_ == ShaderType::kPhong ? phong_shader : gouraud_shader;
@@ -142,8 +138,8 @@ int Application::exec() {
         shader.set_vec3("material.diffuse", object_color);
         shader.set_vec3("material.specular", glm::vec3(0.5f));
         shader.set_float("material.shininess", blinn_ ? 16.0f : 8.0f);
-        shader.set_vec3("light.ambient", 0.1f * light_color);
-        shader.set_vec3("light.diffuse", 0.8f * light_color);
+        shader.set_vec3("light.ambient", 0.05f * light_color);
+        shader.set_vec3("light.diffuse", 0.85f * light_color);
         shader.set_vec3("light.specular", light_color);
         shader.set_bool("light.blinn", blinn_);
 
