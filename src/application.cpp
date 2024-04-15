@@ -111,10 +111,6 @@ int Application::exec() {
     gouraud_shader.build_from("shader/gouraud.vs", "shader/gouraud.fs");
     light_cube_shader.build_from("shader/light_cube.vs", "shader/light_cube.fs");
 
-    float fov = glm::radians(45.0f);
-    float aspect = (float)width_ / height_;
-    glm::mat4 projection = glm::perspective(fov, aspect, 0.1f, 1000.0f);
-
     float angle = 0.0f;
 
     // Main loop
@@ -135,6 +131,10 @@ int Application::exec() {
         }
 
         glm::mat4 view = camera_.view_matrix();
+
+        float fov = glm::radians(45.0f);
+        float aspect = (float)width_ / height_;
+        glm::mat4 projection = glm::perspective(fov, aspect, 0.1f, 1000.0f);
 
         if (animating_) {
             angle += 45.0f * delta_time;
