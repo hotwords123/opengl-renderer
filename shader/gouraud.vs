@@ -23,14 +23,34 @@ uniform mat4 view;
 uniform mat4 projection;
 uniform mat3 normalMatrix;
 
-uniform vec3 lightPos;
-
 uniform Material material;
 uniform Light light;
+uniform vec3 lightPos;
+uniform vec3 viewPos;
 
-vec3 illuminate(Material material, Light light, vec3 fragPos, vec3 normal, vec3 lightPos) {
+uniform bool shadows;
+uniform samplerCube depthCubemap;
+uniform float far;
+
+float pointShadow(vec3 fragPos, vec3 lightPos, float bias) {
+    if (!shadows) {
+        return 0.0;
+    }
+
+    vec3 fragToLight = fragPos - lightPos;
+    float currentDepth = length(fragToLight);
+    if (currentDepth > far) {
+        return 0.0;
+    }
+
+    float shadowMapDepth = far * texture(depthCubemap, fragToLight).r;
+    float shadow = currentDepth > shadowMapDepth + bias ? 1.0 : 0.0;
+    return shadow;
+}
+
+vec3 illuminate(Material material, Light light, vec3 fragPos, vec3 normal, vec3 viewPos, vec3 lightPos) {
     vec3 lightDir = normalize(lightPos - fragPos);
-    vec3 viewDir = normalize(-fragPos);
+    vec3 viewDir = normalize(viewPos - fragPos);
     normal = normalize(normal) * sign(dot(normal, viewDir));
 
     // ambient
@@ -53,15 +73,17 @@ vec3 illuminate(Material material, Light light, vec3 fragPos, vec3 normal, vec3 
     }
     vec3 specular = spec * material.specular * light.specular;
 
-    return ambient + diffuse + specular;
+    // shadow
+    float bias = max(4.0 * (1.0 - diff), 0.2);
+    float shadow = pointShadow(fragPos, lightPos, bias);
+
+    return ambient + (1.0 - shadow) * (diffuse + specular);
 }
 
 void main() {
-    vec3 vPos = vec3(view * model * vec4(aPos, 1.0));
-    vec3 vLightPos = vec3(view * vec4(lightPos, 1.0));
-
+    vec3 fragPos = vec3(model * vec4(aPos, 1.0));
     vec3 normal = normalMatrix * aNormal;
-    Color = illuminate(material, light, vPos, normal, vLightPos);
+    Color = illuminate(material, light, fragPos, normal, viewPos, lightPos);
 
     gl_Position = projection * view * model * vec4(aPos, 1.0);
 }

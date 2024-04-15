@@ -15,16 +15,37 @@ struct Light {
 
 in vec3 FragPos;
 in vec3 Normal;
-in vec3 LightPos;
 
 out vec4 FragColor;
 
 uniform Material material;
 uniform Light light;
+uniform vec3 lightPos;
+uniform vec3 viewPos;
 
-vec3 illuminate(Material material, Light light, vec3 fragPos, vec3 normal, vec3 lightPos) {
+uniform bool shadows;
+uniform samplerCube depthCubemap;
+uniform float far;
+
+float pointShadow(vec3 fragPos, vec3 lightPos, float bias) {
+    if (!shadows) {
+        return 0.0;
+    }
+
+    vec3 fragToLight = fragPos - lightPos;
+    float currentDepth = length(fragToLight);
+    if (currentDepth > far) {
+        return 0.0;
+    }
+
+    float shadowMapDepth = far * texture(depthCubemap, fragToLight).r;
+    float shadow = currentDepth > shadowMapDepth + bias ? 1.0 : 0.0;
+    return shadow;
+}
+
+vec3 illuminate(Material material, Light light, vec3 fragPos, vec3 normal, vec3 viewPos, vec3 lightPos) {
     vec3 lightDir = normalize(lightPos - fragPos);
-    vec3 viewDir = normalize(-fragPos);
+    vec3 viewDir = normalize(viewPos - fragPos);
     normal = normalize(normal) * sign(dot(normal, viewDir));
 
     // ambient
@@ -47,10 +68,14 @@ vec3 illuminate(Material material, Light light, vec3 fragPos, vec3 normal, vec3 
     }
     vec3 specular = spec * material.specular * light.specular;
 
-    return ambient + diffuse + specular;
+    // shadow
+    float bias = max(4.0 * (1.0 - diff), 0.2);
+    float shadow = pointShadow(fragPos, lightPos, bias);
+
+    return ambient + (1.0 - shadow) * (diffuse + specular);
 }
 
 void main() {
-    vec3 result = illuminate(material, light, FragPos, Normal, LightPos);
+    vec3 result = illuminate(material, light, FragPos, Normal, viewPos, lightPos);
     FragColor = vec4(result, 1.0);
 }

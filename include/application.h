@@ -2,8 +2,6 @@
 
 #include "camera.h"
 #include "control.h"
-#include "mesh.h"
-#include "shader.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -44,6 +42,7 @@ private:
 
     ShaderType shader_type_;
     bool blinn_;
+    bool shadows_;
 
     bool first_mouse_;
     double last_x_;

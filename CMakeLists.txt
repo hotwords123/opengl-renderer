@@ -14,8 +14,8 @@ find_package(glm CONFIG REQUIRED)
 find_package(openmesh REQUIRED)
 
 add_executable(main
-    src/main.cpp src/shader.cpp src/mesh.cpp src/camera.cpp src/control.cpp src/application.cpp
-    include/shader.h include/mesh.h include/camera.h include/control.h include/application.h)
+    src/main.cpp src/shader.cpp src/mesh.cpp src/camera.cpp src/control.cpp src/application.cpp src/shadow.cpp
+    include/shader.h include/mesh.h include/camera.h include/control.h include/application.h include/shadow.h)
 
 target_include_directories(main PRIVATE ${OPENMESH_INCLUDE_DIRS})
 

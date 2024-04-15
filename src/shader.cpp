@@ -49,7 +49,11 @@ bool Shader::compile_from(const char *filename) {
     file.read(source.data(), len);
     file.close();
 
-    return compile(source.c_str());
+    bool ret = compile(source.c_str());
+    if (!ret) {
+        cerr << "FILE: " << filename << endl;
+    }
+    return ret;
 }
 
 ShaderProgram::ShaderProgram() {
@@ -81,20 +85,31 @@ bool ShaderProgram::link() {
     return success;
 }
 
-bool ShaderProgram::build_from(const char *vertex, const char *fragment) {
-    Shader vs(GL_VERTEX_SHADER);
-    if (!vs.compile_from(vertex)) {
-        return false;
+bool ShaderProgram::build_from(initializer_list<pair<GLenum, const char *>> shaders) {
+    for (const auto &[type, filename] : shaders) {
+        Shader shader(type);
+        if (!shader.compile_from(filename)) {
+            return false;
+        }
+        attach_shader(shader);
     }
-    attach_shader(vs);
-
-    Shader fs(GL_FRAGMENT_SHADER);
-    if (!fs.compile_from(fragment)) {
-        return false;
-    }
-    attach_shader(fs);
 
     return link();
+}
+
+bool ShaderProgram::build_from_vf(const char *prefix) {
+    return build_from({
+        {GL_VERTEX_SHADER, (string(prefix) + ".vs").c_str()},
+        {GL_FRAGMENT_SHADER, (string(prefix) + ".fs").c_str()}
+    });
+}
+
+bool ShaderProgram::build_from_vgf(const char *prefix) {
+    return build_from({
+        {GL_VERTEX_SHADER, (string(prefix) + ".vs").c_str()},
+        {GL_GEOMETRY_SHADER, (string(prefix) + ".gs").c_str()},
+        {GL_FRAGMENT_SHADER, (string(prefix) + ".fs").c_str()}
+    });
 }
 
 void ShaderProgram::use() const {
@@ -106,6 +121,10 @@ int ShaderProgram::uniform_location(const char *name) const {
 }
 
 void ShaderProgram::set_bool(const char *name, bool value) const {
+    glUniform1i(uniform_location(name), value);
+}
+
+void ShaderProgram::set_int(const char *name, int value) const {
     glUniform1i(uniform_location(name), value);
 }
 
