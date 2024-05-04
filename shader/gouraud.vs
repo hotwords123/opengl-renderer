@@ -51,7 +51,7 @@ float pointShadow(vec3 fragPos, vec3 lightPos, float bias) {
 vec3 illuminate(Material material, Light light, vec3 fragPos, vec3 normal, vec3 viewPos, vec3 lightPos) {
     vec3 lightDir = normalize(lightPos - fragPos);
     vec3 viewDir = normalize(viewPos - fragPos);
-    normal = normalize(normal) * sign(dot(normal, viewDir));
+    normal = normalize(normal);
 
     // ambient
     vec3 ambient = material.ambient * light.ambient;
@@ -76,6 +76,10 @@ vec3 illuminate(Material material, Light light, vec3 fragPos, vec3 normal, vec3 
     // shadow
     float bias = max(4.0 * (1.0 - diff), 0.2);
     float shadow = pointShadow(fragPos, lightPos, bias);
+
+    if (dot(normal, viewDir) < 0) {
+        shadow = 1.0;
+    }
 
     return ambient + (1.0 - shadow) * (diffuse + specular);
 }
