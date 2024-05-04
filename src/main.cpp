@@ -1,4 +1,4 @@
-#include "application.h"
+#include "scene_demo.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -24,20 +24,11 @@ int main() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 
-    GLFWwindow *window = glfwCreateWindow(1280, 720, "LearnOpenGL", nullptr, nullptr);
-    if (window == nullptr) {
-        cerr << "Failed to create GLFW window" << endl;
-        return 1;
-    }
+    unique_ptr<Application> app;
+    app = make_unique<SceneDemo>();
 
-    glfwMakeContextCurrent(window);
-
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
-        cerr << "Failed to initialize GLAD" << endl;
-        return 1;
-    }
-
-    int ret = Application(window).exec();
+    int ret = app->exec();
+    app.reset();
 
     glfwTerminate();
     return ret;

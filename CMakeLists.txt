@@ -6,16 +6,35 @@ project(Renderer)
 add_definitions(-D_USE_MATH_DEFINES)
 add_compile_options(/W4)
 
-include_directories(include)
-
 find_package(glad CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(glm CONFIG REQUIRED)
 find_package(openmesh REQUIRED)
 
-add_executable(main
-    src/main.cpp src/shader.cpp src/mesh.cpp src/camera.cpp src/control.cpp src/application.cpp src/shadow.cpp
-    include/shader.h include/mesh.h include/camera.h include/control.h include/application.h include/shadow.h)
+set(SOURCES
+    src/main.cpp
+    src/shader.cpp
+    src/mesh.cpp
+    src/camera.cpp
+    src/control.cpp
+    src/application.cpp
+    src/shadow.cpp
+    src/scene_demo.cpp
+)
+
+set(HEADERS
+    include/shader.h
+    include/mesh.h
+    include/camera.h
+    include/control.h
+    include/application.h
+    include/shadow.h
+    include/scene_demo.h
+)
+
+add_executable(main ${SOURCES} ${HEADERS})
+
+include_directories(include)
 
 target_include_directories(main PRIVATE ${OPENMESH_INCLUDE_DIRS})
 
