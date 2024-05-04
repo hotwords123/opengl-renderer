@@ -4,13 +4,13 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-struct Vertex {
-    glm::vec3 position;
-    glm::vec3 normal;
-};
-
 class BasicMesh {
 public:
+    struct Vertex {
+        glm::vec3 position;
+        glm::vec3 normal;
+    };
+
     BasicMesh() : vbo_(0), vao_(0), ebo_(0) {}
     ~BasicMesh();
 

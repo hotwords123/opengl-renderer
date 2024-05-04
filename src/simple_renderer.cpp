@@ -1,5 +1,6 @@
 #include "simple_renderer.h"
 #include "mesh.h"
+#include "shape.h"
 #include "shader.h"
 
 #include <glad/glad.h>
@@ -17,6 +18,7 @@ SimpleRenderer::SimpleRenderer(vector<string> obj_files)
       controller_(camera_, 0.125f, 1.1f),
       obj_files_(std::move(obj_files)),
       wireframe_(false),
+      trackball_(true),
       shader_type_(ShaderType::kPhong),
       blinn_(true) {
 }
@@ -61,6 +63,8 @@ bool SimpleRenderer::load_meshes() {
         mesh->setup();
         meshes_.push_back(std::move(mesh));
     }
+
+    circle_mesh_ = make_unique<CircleMesh>(64);
     return true;
 }
 
@@ -70,6 +74,9 @@ bool SimpleRenderer::load_shaders() {
 
     gouraud_shader_ = make_unique<ShaderProgram>();
     TRY(gouraud_shader_->build_from_vf("shader/gouraud"));
+
+    circle_shader_ = make_unique<ShaderProgram>();
+    TRY(circle_shader_->build_from_vf("shader/simple"));
 
     return true;
 }
@@ -146,6 +153,33 @@ int SimpleRenderer::render() {
         mesh->draw();
     }
 
+    // Draw trackball
+    if (trackball_) {
+        circle_shader_->use();
+
+        circle_shader_->set_mat4("projection", projection);
+        circle_shader_->set_mat4("view", view);
+
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, controller_.target());
+        model = glm::scale(model, 0.3f * glm::vec3(controller_.distance()));
+
+        // yz-plane
+        circle_shader_->set_mat4("model", glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+        circle_shader_->set_vec3("objectColor", glm::vec3(1.0f, 0.0f, 0.0f));
+        circle_mesh_->draw();
+
+        // xz-plane
+        circle_shader_->set_mat4("model", model);
+        circle_shader_->set_vec3("objectColor", glm::vec3(0.0f, 1.0f, 0.0f));
+        circle_mesh_->draw();
+
+        // xy-plane
+        circle_shader_->set_mat4("model", glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
+        circle_shader_->set_vec3("objectColor", glm::vec3(0.0f, 0.0f, 1.0f));
+        circle_mesh_->draw();
+    }
+
     return 0;
 }
 
@@ -202,10 +236,15 @@ void SimpleRenderer::key_callback(int key, int scancode, int action, int mods) {
     if (key == GLFW_KEY_4 && action == GLFW_PRESS) {
         blinn_ = false;
     }
+
+    // T - toggle trackball mode
+    if (key == GLFW_KEY_T && action == GLFW_PRESS) {
+        trackball_ = !trackball_;
+    }
 }
 
 void SimpleRenderer::scroll_callback(double xoffset, double yoffset) {
     Application::scroll_callback(xoffset, yoffset);
 
-    controller_.zoom(yoffset);
+    controller_.zoom((float)yoffset);
 }

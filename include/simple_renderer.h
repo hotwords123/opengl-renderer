@@ -11,6 +11,7 @@
 #include <string>
 
 class BasicMesh;
+class CircleMesh;
 class ShaderProgram;
 
 class SimpleRenderer : public Application {
@@ -46,14 +47,17 @@ private:
 
     std::vector<std::string> obj_files_;
     std::vector<std::unique_ptr<BasicMesh>> meshes_;
+    std::unique_ptr<CircleMesh> circle_mesh_;
 
     std::unique_ptr<ShaderProgram> phong_shader_;
     std::unique_ptr<ShaderProgram> gouraud_shader_;
+    std::unique_ptr<ShaderProgram> circle_shader_;
 
     glm::vec3 light_pos_;
     glm::vec3 light_color_;
 
     bool wireframe_;
+    bool trackball_;
 
     ShaderType shader_type_;
     bool blinn_;
