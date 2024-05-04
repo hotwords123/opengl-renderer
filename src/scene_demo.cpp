@@ -78,7 +78,7 @@ bool SceneDemo::load_shaders() {
     TRY(gouraud_shader_->build_from_vf("shader/gouraud"));
 
     light_cube_shader_ = make_unique<ShaderProgram>();
-    TRY(light_cube_shader_->build_from_vf("shader/light_cube"));
+    TRY(light_cube_shader_->build_from_vf("shader/simple"));
 
     point_shadow_shader_ = make_unique<ShaderProgram>();
     TRY(point_shadow_shader_->build_from_vgf("shader/point_shadow"));
