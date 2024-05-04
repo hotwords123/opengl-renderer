@@ -35,55 +35,71 @@ int SceneDemo::init() {
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_FRAMEBUFFER_SRGB);
 
-    // Initialize camera
-    camera_.set_position(glm::vec3(250.0f, 250.0f, 250.0f));
-    camera_.look_at(glm::vec3(0.0f, 50.0f, 0.0f));
-
-    // Load mesh
-    mesh_ = make_unique<BasicMesh>();
-    if (!mesh_->load("test.obj")) {
-        cerr << "Failed to load mesh" << endl;
+    if (!load_meshes()) {
         return 1;
     }
+    if (!load_shaders()) {
+        return 1;
+    }
+    init_shadow_map();
+    init_scene();
+
+    return 0;
+}
+
+#define TRY(statement) \
+    if (!(statement)) { \
+        cerr << __FILE__ << ":" << __LINE__ << ": " << #statement << " failed" << endl; \
+        return false; \
+    }
+
+bool SceneDemo::load_meshes() {
+    mesh_ = make_unique<BasicMesh>();
+    TRY(mesh_->load("test.obj"));
     mesh_->setup();
 
     cube_mesh_ = make_unique<BasicMesh>();
-    if (!cube_mesh_->load("cube.obj")) {
-        cerr << "Failed to load cube mesh" << endl;
-        return 1;
-    }
+    TRY(cube_mesh_->load("cube.obj"));
     cube_mesh_->setup();
 
     plane_mesh_ = make_unique<BasicMesh>();
-    if (!plane_mesh_->load("plane.obj")) {
-        cerr << "Failed to load plane mesh" << endl;
-        return 1;
-    }
+    TRY(plane_mesh_->load("plane.obj"));
     plane_mesh_->setup();
 
-    // Initialize shadow mapping
-    shadow_map_ = make_unique<PointShadowMap>(2048, 2048, 1.0f, 1024.0f);
+    return true;
+}
 
+bool SceneDemo::load_shaders() {
     // Load shader programs
     phong_shader_ = make_unique<ShaderProgram>();
-    phong_shader_->build_from_vf("shader/phong");
+    TRY(phong_shader_->build_from_vf("shader/phong"));
 
     gouraud_shader_ = make_unique<ShaderProgram>();
-    gouraud_shader_->build_from_vf("shader/gouraud");
+    TRY(gouraud_shader_->build_from_vf("shader/gouraud"));
 
     light_cube_shader_ = make_unique<ShaderProgram>();
-    light_cube_shader_->build_from_vf("shader/light_cube");
+    TRY(light_cube_shader_->build_from_vf("shader/light_cube"));
 
     point_shadow_shader_ = make_unique<ShaderProgram>();
-    point_shadow_shader_->build_from_vgf("shader/point_shadow");
+    TRY(point_shadow_shader_->build_from_vgf("shader/point_shadow"));
 
-    // Initialize scene
+    return true;
+}
+
+#undef TRY
+
+void SceneDemo::init_shadow_map() {
+    shadow_map_ = make_unique<PointShadowMap>(2048, 2048, 1.0f, 1024.0f);
+}
+
+void SceneDemo::init_scene() {
+    camera_.set_position(glm::vec3(250.0f, 250.0f, 250.0f));
+    camera_.look_at(glm::vec3(0.0f, 50.0f, 0.0f));
+
     light_pos_ = glm::vec3(200.0f, 150.0f, 0.0f);
     light_color_ = glm::vec3(1.0f, 1.0f, 1.0f);
 
     angle_ = 0.0f;
-
-    return 0;
 }
 
 int SceneDemo::render() {

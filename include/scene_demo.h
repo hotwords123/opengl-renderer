@@ -33,6 +33,10 @@ protected:
     int render() override;
 
 private:
+    bool load_meshes();
+    bool load_shaders();
+    void init_shadow_map();
+    void init_scene();
     void render_pass(const ShaderProgram &shader, bool shadow_pass);
 
 private:
