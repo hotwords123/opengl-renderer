@@ -27,6 +27,10 @@ static void global_key_callback(GLFWwindow* window, int key, int scancode, int a
     get_app(window)->key_callback(key, scancode, action, mods);
 }
 
+static void global_scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
+    get_app(window)->scroll_callback(xoffset, yoffset);
+}
+
 Application::Application(int width, int height, const char *title)
     : window_(),
       width_(width),
@@ -48,6 +52,7 @@ Application::Application(int width, int height, const char *title)
     glfwSetCursorPosCallback(window_, global_cursor_pos_callback);
     glfwSetMouseButtonCallback(window_, global_mouse_button_callback);
     glfwSetKeyCallback(window_, global_key_callback);
+    glfwSetScrollCallback(window_, global_scroll_callback);
 }
 
 Application::~Application() {
@@ -123,4 +128,9 @@ void Application::key_callback(int key, int scancode, int action, int mods) {
     (void)scancode;
     (void)action;
     (void)mods;
+}
+
+void Application::scroll_callback(double xoffset, double yoffset) {
+    (void)xoffset;
+    (void)yoffset;
 }

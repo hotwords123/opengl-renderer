@@ -18,6 +18,7 @@ public:
     virtual void cursor_pos_callback(double xpos, double ypos);
     virtual void mouse_button_callback(int button, int action, int mods);
     virtual void key_callback(int key, int scancode, int action, int mods);
+    virtual void scroll_callback(double xoffset, double yoffset);
 
 protected:
     virtual int init() = 0;
