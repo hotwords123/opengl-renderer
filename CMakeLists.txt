@@ -20,6 +20,7 @@ set(SOURCES
     src/application.cpp
     src/shadow.cpp
     src/scene_demo.cpp
+    src/simple_renderer.cpp
 )
 
 set(HEADERS
@@ -30,6 +31,7 @@ set(HEADERS
     include/application.h
     include/shadow.h
     include/scene_demo.h
+    include/simple_renderer.h
 )
 
 add_executable(main ${SOURCES} ${HEADERS})
