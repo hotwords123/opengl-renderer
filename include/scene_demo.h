@@ -41,7 +41,7 @@ private:
 
 private:
     Camera camera_;
-    CameraController controller_;
+    FirstPersonController controller_;
 
     std::unique_ptr<BasicMesh> mesh_;
     std::unique_ptr<BasicMesh> cube_mesh_;

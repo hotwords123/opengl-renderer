@@ -14,7 +14,7 @@ using namespace std;
 SceneDemo::SceneDemo()
     : Application(1280, 720, "Scene Demo"),
       camera_(),
-      controller_(camera_),
+      controller_(camera_, 100.0f, 0.03f),
       wireframe_(false),
       animating_(true),
       pointer_locked_(true),
@@ -218,6 +218,7 @@ void SceneDemo::render_pass(const ShaderProgram &shader, bool shadow_pass) {
 }
 
 void SceneDemo::process_input() {
+    using CameraMovement = FirstPersonController::Movement;
     static const pair<int, CameraMovement> movement_map[] = {
         {GLFW_KEY_W, CameraMovement::kForward},
         {GLFW_KEY_S, CameraMovement::kBackward},

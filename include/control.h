@@ -2,22 +2,21 @@
 
 class Camera;
 
-enum class CameraMovement {
-    kForward,
-    kBackward,
-    kLeft,
-    kRight,
-    kUp,
-    kDown,
-};
-
-class CameraController {
+class FirstPersonController {
 public:
-    using enum CameraMovement;
+    enum class Movement {
+        kForward,
+        kBackward,
+        kLeft,
+        kRight,
+        kUp,
+        kDown,
+    };
+    using enum Movement;
 
-    CameraController(Camera& camera);
+    FirstPersonController(Camera& camera, float movement_speed, float mouse_sensitivity);
 
-    void handle_keyboard(CameraMovement movement, float delta_time);
+    void handle_keyboard(Movement movement, float delta_time);
     void handle_mouse(float x_offset, float y_offset);
 
 private:
