@@ -2,6 +2,7 @@
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+#include <glm/gtx/string_cast.hpp>
 #include <iostream>
 
 using namespace std;
@@ -36,6 +37,13 @@ bool BasicMesh::load(const char *filename) {
     auto to_vec3 = [](const auto &rhs) {
         return glm::vec3(rhs[0], rhs[1], rhs[2]);
     };
+
+    auto mesh_point = [&](OpenMesh_TriMesh::VertexHandle vh) {
+        return mesh.point(vh);
+    };
+    centroid_ = to_vec3(mesh.vertices().avg(mesh_point));
+    min_ = to_vec3(mesh.vertices().min(mesh_point));
+    max_ = to_vec3(mesh.vertices().max(mesh_point));
 
     for (const auto &v : mesh.vertices()) {
         auto &vertex = vertices_[v.idx()];
