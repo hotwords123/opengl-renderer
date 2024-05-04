@@ -12,7 +12,7 @@ uniform mat3 normalMatrix;
 
 void main() {
     FragPos = vec3(model * vec4(aPos, 1.0));
-    Normal = normalMatrix * aNormal;
+    Normal = normalize(normalMatrix * aNormal);
 
     gl_Position = projection * view * model * vec4(aPos, 1.0);
 }
