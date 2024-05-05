@@ -109,6 +109,7 @@ void Application::cursor_pos_callback(double xpos, double ypos) {
 
     if (!mouse_pos_) {
         mouse_pos_ = make_pair(x, y);
+        delta_mouse_pos_ = make_pair(0.0f, 0.0f);
         return;
     }
 
