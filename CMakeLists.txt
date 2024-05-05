@@ -36,6 +36,9 @@ set(HEADERS
     include/shape.h
 )
 
+file(COPY shader DESTINATION "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+file(COPY models DESTINATION "${CMAKE_BINARY_DIR}/${CMAKE_BUILD_TYPE}")
+
 add_executable(main ${SOURCES} ${HEADERS})
 
 include_directories(include)
