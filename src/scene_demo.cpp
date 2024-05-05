@@ -55,15 +55,15 @@ int SceneDemo::init() {
 
 bool SceneDemo::load_meshes() {
     mesh_ = make_unique<BasicMesh>();
-    TRY(mesh_->load("test.obj"));
+    TRY(mesh_->load("models/face.obj"));
     mesh_->setup();
 
     cube_mesh_ = make_unique<BasicMesh>();
-    TRY(cube_mesh_->load("cube.obj"));
+    TRY(cube_mesh_->load("models/cube.obj"));
     cube_mesh_->setup();
 
     plane_mesh_ = make_unique<BasicMesh>();
-    TRY(plane_mesh_->load("plane.obj"));
+    TRY(plane_mesh_->load("models/plane.obj"));
     plane_mesh_->setup();
 
     return true;
