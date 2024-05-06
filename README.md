@@ -9,6 +9,28 @@ This project implements a simple OpenGL renderer capable of loading OBJ models a
 - Provides keyboard shortcuts to toggle rendering modes and lighting models.
 - Implements Omnidirectional Shadow Mapping, with keyboard shortcuts to enable or disable shadows.
 
+## Installing Dependencies
+
+This project relies on several dependencies that can be easily installed using [vcpkg](https://github.com/microsoft/vcpkg). Run the following commands to install the required dependencies:
+
+```cmd
+> cd <vcpkg_directory>
+> .\vcpkg install glad glfw3 glm openmesh --triplet x64-windows
+```
+
+## Building the Project
+
+The project is built using CMake. After installing the dependencies, follow the steps below to build the project:
+
+1. Generate build files using CMake. Tell CMake where to find the dependencies by setting the `CMAKE_TOOLCHAIN_FILE` variable to the path of the vcpkg toolchain file.
+   ```cmd
+   > cmake -DCMAKE_TOOLCHAIN_FILE=<vcpkg_directory>\scripts\buildsystems\vcpkg.cmake -B build
+   ```
+2. Build the project using the generated build files.
+   ```cmd
+   > cmake --build build --config Release
+   ```
+
 ## Usage
 
 Ensure that the working directory contains the necessary files:
